@@ -91,7 +91,7 @@ exports.getUserAuthentic = async (req, res) => {
 
     // Validar Token
     try {
-        const cifrado = jwt.verify(token, process.env.SECRETA);
+        const cifrado = jwt.verify(token, process.env.SECRET);
         const user = await User.findById(cifrado.user.id).select('name role email');
         res.send(user);
     } catch (error) {
