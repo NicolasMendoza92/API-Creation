@@ -17,7 +17,7 @@ exports.register = async (req, res) => {
         if (userfind) {
             return res.status(400).send('Ya existe cuenta con este Email');
         }
-
+        // nuevos usuarios, hacemos que todos los logeados sean user comunes
         const bodyUser = { ...req.body, role: 'user' };
         let user = new User(bodyUser);
 
@@ -36,39 +36,41 @@ exports.register = async (req, res) => {
     }
 };
 
+// funcion para logearse y validarse 
 exports.login = async (req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ msg: errors.array() });
         }
-        // desesctructuramos las prop 
+        // desesctructuramos las prop, esto es lo que se le pedira al usuario cuando se logee 
         const { email, password } = req.body;
 
-
+        // vemos las validaciones, busca si ya existe algno registrado con el metodo findOne en el user
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ msg: 'usuario no existe' });
         }
-        // password revisar 
+        // codigo para revisar password y encriptarla 
         const passCorrect = await bcryptjs.compare(password, user.password);
         if (!passCorrect) {
             return res.status(400).json({ msg: 'Password incorrecto' });
         }
 
-        // Si todo es correcto Crear y firmar JWT (el token - alfanumerico de datos)
+        // Si todo es correcto en las validaciones Crear y firmar JWT (el token - alfanumerico de datos) - codigo para realizarlo
         const payload = {
             user: {
                 id: user.id,
                 role: user.role,
             },
         };
+
         jwt.sign(
             payload,
             // usamos la vble de entorno como el url de mongo 
             process.env.SECRET,
             {
-                expiresIn: 3600, //1 hora
+                expiresIn: 360000, //1 hora
             },
             (error, token) => {
                 if (error) throw error;
@@ -81,9 +83,12 @@ exports.login = async (req, res) => {
     }
 };
 
+// funcion para obtener usuario autenticado 
+
 exports.getUserAuthentic = async (req, res) => {
-    // Leer token
+    // Leer token - esto lo hacemos en header ( es una parte de la request como el body donde podemos enviar datos )
     const token = req.header('x-auth-token');
+
     // Revisar Token
     if (!token) {
         return res.status(401).json({ msg: 'No hay Token, permiso no valido' });

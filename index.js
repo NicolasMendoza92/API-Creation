@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors')
+// importamos las rutas que necesitamos.
+const userRoute = require('./routes/usersRoute')
 const memeRoutes = require('./routes/memesRoute');
 const authRoutes = require('./routes/authRoute')
 
@@ -25,7 +27,7 @@ app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
 
 //importar rutas
-app.use('/api/users', require('./routes/usersRoute'))
+app.use('/api/users', userRoute)
 app.use('/api/memes', memeRoutes);
 app.use('/api/auth', authRoutes);
 

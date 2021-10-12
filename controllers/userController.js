@@ -1,14 +1,16 @@
-
-const User = require("../models/User");
 const bcryptjs = require('bcryptjs');
+// Importamos el User modelo por que lo vamos a nombrar
+const User = require("../models/User");
 const { validationResult } = require("express-validator");
 
+// funcion para crear usuarios y guardarlos en array 
 exports.createUser = async (req, res) => {
   // revisamos errores 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ msg: errors.array() });
   }
+  // definimos lo que queremos que el usuario coloque para crear su usuario 
   const { email, password } = req.body;
 
   try {
@@ -19,7 +21,7 @@ exports.createUser = async (req, res) => {
 
     let user = new User(req.body);
 
-    //hashear el password
+    //hashear el password - codigo para poner el password no visible
     const salt = await bcryptjs.genSalt(10);
     user.password = await bcryptjs.hash(password, salt);
 
