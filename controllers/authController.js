@@ -30,6 +30,7 @@ exports.register = async (req, res) => {
 
         //mensaje de exito
         res.send("Usuario Creado Correctamente");
+        
     } catch (error) {
         console.log(error);
         res.status(400).send("Hubo un error");
@@ -74,7 +75,7 @@ exports.login = async (req, res) => {
             },
             (error, token) => {
                 if (error) throw error;
-                res.json({ token });
+                res.json({ token, name: user.name });
             }
         );
 
@@ -91,12 +92,14 @@ exports.getUserAuthentic = async (req, res) => {
 
     // Revisar Token
     if (!token) {
+        // esto es para cuando el usuario no esta logeado
         return res.status(401).json({ msg: 'No hay Token, permiso no valido' });
     }
 
     // Validar Token
     try {
         const cifrado = jwt.verify(token, process.env.SECRET);
+        // aca hacemos como un cifrado y le indicamos que es lo que queremos que muestre cuando llamo a la response.data de la API.
         const user = await User.findById(cifrado.user.id).select('name role email');
         res.send(user);
     } catch (error) {
