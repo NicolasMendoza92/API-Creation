@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors')
+const morgan = require('morgan');
 // importamos las rutas que necesitamos.
 const userRoute = require('./routes/usersRoute')
 const memeRoutes = require('./routes/memesRoute');
@@ -14,6 +15,7 @@ const authRoutes = require('./routes/authRoute')
 // crear el servidor
 const app = express();
 
+app.use(morgan('dev'));
 // permitir acceso al serividor, para poder usarlo como una API y llamarlo de otra app react mia
 app.use(cors());
 

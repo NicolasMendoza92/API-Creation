@@ -10,7 +10,7 @@ exports.register = async (req, res) => {
         return res.status(400).json({ msg: errors.array() });
     }
     // desectructuracion de prop del objeto
-    const { email, password } = req.body;
+    const { email, password} = req.body;
 
     try {
         let userfind = await User.findOne({ email });
@@ -95,7 +95,6 @@ exports.getUserAuthentic = async (req, res) => {
         // esto es para cuando el usuario no esta logeado
         return res.status(401).json({ msg: 'No hay Token, permiso no valido' });
     }
-
     // Validar Token
     try {
         const cifrado = jwt.verify(token, process.env.SECRET);
